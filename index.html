@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumindo Api de games</title>
+    <!--Importando o arquivo .css do bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body{
+            font-family: sans-serif;
+            background-color: rgba(130, 138, 248, 0.219);
+            font-weight: 800;
+        }
+        .container li{
+            background-color: rgba(255, 251, 251, 0.74);
+        }
+        .container .btn{
+            float: right;
+        }
+        .form-control{
+            background-color: rgba(252, 252, 252, 0.548);
+        }
+    </style>
+</head>
+
+<body>
+    
+    <h1 style="text-align: center;">Consumindo API de games</h1>
+    <hr>
+    <!--Listagem de games cadastrados-->
+    <h2>Listando games</h3>
+    <form class="container"> 
+        <ul class="list-group" id="lista_games">
+        </ul>
+        
+    </form>
+    <!--Criar novos games-->
+    <form class="form-control">
+        <h2>Criar novo game</h3>
+        <input type="text" id="title" placeholder="Nome do game">
+        <input type="number" id="year" placeholder="Ano">
+        <input type="number" id="price" placeholder="Preço em R$">
+        <button class="btn btn-outline-primary" onclick="criar()">Cadastrar</button>
+    </form>
+    <!--Editar game-->
+    <form class="form-control">
+        <h2>Editar games</h3>
+        <input type="text" id="editId" placeholder="Id" readonly>
+        <input type="text" id="editTitle" placeholder="Nome do game">
+        <input type="number" id="editYear" placeholder="Ano">
+        <input type="number" id="editPrice" placeholder="Preço em R$">
+        <button class="btn btn-outline-primary" onclick="editarDados()">Editar</button>
+    </form>
+
+</body>
+<!--Importando o arquivo .js do bootstrap-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+    <!--Importando o Axios para o site-->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    //Criando novos games na API
+    axios.get('http://localhost:3000/games').then(info => {
+        var lista = document.getElementById('lista_games');
+        var games = info.data;
+        //Função para criar atributos data para utilizar na edição dos games
+        games.forEach(game => {
+            var item = document.createElement('li');
+            item.setAttribute('data-title', game.title);
+            item.setAttribute('data-id', game.id);
+            item.setAttribute('data-price', game.price);
+            item.setAttribute('data-year', game.year);
+            //Criando atributos class para ativar funcionalidades do bootstrap
+            item.setAttribute('class', "list-group-item");
+            item.setAttribute('class', "list-group-item");
+            item.setAttribute('class', "list-group-item");
+            item.setAttribute('class', "list-group-item");
+            //Template string para listar os dados dos games da API
+            item.innerHTML = `Game:<strong>${game.title}</strong><br>
+            Ano:<strong>${game.year}</strong><br>
+            Preço:<strong>R$ ${game.price}</strong>`;
+            //Criando os botões de deleção e edição de games
+            var delBtn = document.createElement('button');
+            var editBtn = document.createElement('button');
+            editBtn.innerHTML = 'Editar';
+            editBtn.setAttribute('class', "btn btn-outline-warning");
+            delBtn.innerHTML = 'Deletar';
+            delBtn.setAttribute('class', "btn btn-outline-danger");
+            /*Chamando a função de preencher os campos editar a partir do game que quiser, assim modificando apenas o necessário*/
+            editBtn.addEventListener('click', function () {
+                lerDados(item);
+            })
+            //Função de deleção de games
+            delBtn.addEventListener('click', function () {
+                deletar(item);
+            })
+            //Funcionalidades para inserir as tags criadas em suas respectivas tag's mãe
+            item.appendChild(editBtn);
+            item.appendChild(delBtn);
+            lista.appendChild(item);
+        })
+    }).catch(err => {
+        console.log(err);
+    })
+
+    //Função para criar novos games na API
+    function criar() {
+        var title = document.getElementById('title');
+        var year = document.getElementById('year')
+        var price = document.getElementById('price')
+
+        var game = {
+            title: title.value,
+            price: price.value,
+            year: year.value
+        }
+        //Chamando o axios para realizar o consumo da API e criar novo jogo
+        axios.post('http://localhost:3000/game', game).then(response => {
+            if (response.status == 200) {
+                alert('Game cadastrado com sucesso!');
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+
+    //Função de deletar games da API
+    function deletar(item) {
+        var id = item.getAttribute('data-id');
+        axios.delete('http://localhost:3000/game/' + id).then(() => {
+            alert('Game deletado!');
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+
+    //FUnção de ler dados da API a partir dos atributos data criados acima
+    function lerDados(item) {
+        var title = item.getAttribute('data-title')
+        var id = item.getAttribute('data-id')
+        var price = item.getAttribute('data-price')
+        var year = item.getAttribute('data-year')
+        document.getElementById('editId').value = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('editYear').value = year;
+        document.getElementById('editPrice').value = price;
+
+    }
+
+
+    //Função de editar dados de um game da API
+    function editarDados() {
+        var idEdit = document.getElementById('editId');
+        var title = document.getElementById('editTitle');
+        var year = document.getElementById('editYear')
+        var price = document.getElementById('editPrice')
+
+        var game = {
+            title: title.value,
+            price: price.value,
+            year: year.value
+        }
+        var id = idEdit.value;
+        /*Axios com a rota tipo put para edição, passando o id, pois é necessário para a rota de edição e game para passar as novas alterações*/
+        axios.put('http://localhost:3000/game/' + id, game).then(response => {
+            if (response.status == 200) {
+                alert('Game editado com sucesso!');
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+</script>
+
+</html>
