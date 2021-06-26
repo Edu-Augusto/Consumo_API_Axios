@@ -2,7 +2,7 @@
 <body>
     <div class="Header">
         <h2>Consumo de API de games com Axios</h2>
-        <p>Esta é um pequeno projeto de consumo de API com Axios.A API utilizada é a de cadastro de games, que ja está postada no meu perfil.É um projeto bem simples e com um layout bem simples, apenas para a introdução em consumo de API's com Axios, espero que apreciem este projeto e esperem por projetos mais robustos e aprofundados futuramente.
+        <p>Esta é um pequeno projeto de consumo de API com Axios.A API utilizada é o projeto cadastro_de_games, que ja está postada neste perfil.É um projeto bem simples e com um layout bem simples, apenas para a introdução em consumo de API's com Axios, espero que apreciem este projeto e esperem por projetos mais robustos e aprofundados futuramente.
         <p>Atenciosamente <strong>Eduardo Augusto Oliveira</strong>.</p>
         </p>
         <h3>Ferramentas utilizadas e necessárias do projeto</h3>
